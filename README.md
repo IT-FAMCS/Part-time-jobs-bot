@@ -1,7 +1,7 @@
 #Part-time jobs Bot
 Бот для поиска подработок на hh.ru/rabota.by
 
-### :man_coding: Что умеет бот?:
+### :man_technologist: Что умеет бот?:
 
 - Искать работу по ключевым словам
 - Полная интеграция с hh.ru/rabota.by
