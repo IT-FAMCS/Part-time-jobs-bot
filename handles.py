@@ -1,18 +1,21 @@
 from aiogram import Router, F
+from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 
 import keyboard as kb
 router=Router()
 
+@router.message(CommandStart())
+async def cmd_start(message: Message):
+    await message.reply('Привет!', reply_markup=kb.current_situation)
+
 @router.message(F.text=="Фильтры")
 async def start_filters(message:Message):
     await message.answer('Выбери фильтр',reply_markup=kb.filters)
     
-    
-
-@router.message(F.text=="Поиск")
-async def search(message:Message):
-    await message.answer('Скоро будет работать')
+@router.message(F.text == "Поиск")
+async def cmd_search(message:Message):
+    await message.answer("(")
 
 @router.message(F.text=="Информация")
 async def info(message:Message):
@@ -29,9 +32,20 @@ async def info(message:Message):
     )
     await message.answer(message_text,reply_markup=kb.back_to_filters)
 
+@router.message(F.text=="Ключевые слова")
+async def cmd_key_words(message:Message):
+    await message.answer('Настройте ключевые слова',reply_markup=kb.key_words) 
+
+@router.message(F.text=="Добавить ключевое слово")
+async def cmd_add_key_words(message:Message):
+    await message.answer('Напишите ключевое слово, ',reply_markup=kb.current_situation)
+
+@router.message(F.text=="Добавить слово исключение")
+async def cmd_add_key_words(message:Message):
+    await message.answer('Напишите слово исключение',reply_markup=kb.current_situation)         
+
 @router.message(F.text=="Город")
 async def start_filters(message:Message):
-   
     await message.answer('Выберите из предложеных вариантов',reply_markup=kb.city)
 
 @router.message(F.text=="Отрасль")

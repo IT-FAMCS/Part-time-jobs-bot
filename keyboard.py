@@ -2,9 +2,13 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 
 filters=ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text='Город'),KeyboardButton(text='Отрасль'), KeyboardButton(text='Опыт работы')],
-    [KeyboardButton(text='Тип занятости'),KeyboardButton(text='График работы')]
+    [KeyboardButton(text='Тип занятости'),KeyboardButton(text='График работы'), KeyboardButton(text='Ключевые слова')]
 
 ], resize_keyboard=True, input_field_placeholder='Filters')
+
+key_words=ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text='Добавить ключевое слово'), KeyboardButton(text='Добавить слово исключение')]
+], resize_keyboard=True, input_field_placeholder='Key_words')
 
 city=InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Минск",callback_data='minsk')],
