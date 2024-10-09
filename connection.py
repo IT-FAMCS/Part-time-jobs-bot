@@ -37,14 +37,45 @@ class SQLConnect():
             return True
         except sql.Error as e:
             return {'error at adding filters': e}
-    def generate_link(self, **kwargs):
-        pass
-    def search(self, username):
+    def generate_link(self, filters) -> str:
+        base_url = "https://hh.ru/search/vacancy?"
+        params = {
+            "text": filters[0],          
+            "excluded_text": filters[1],  
+            "area": filters[2],           
+            "salary": filters[3],         
+            "experience": filters[4],     
+            "education": filters[5],      
+            "employment": filters[6],     
+            "schedule": filters[7],       
+            "part_time": filters[8],     
+            "L_save_area": "true",        
+            "order_by": "relevance",      
+            "items_on_page": 50          
+        }
+        
+        query_string = "&".join([f"{key}={value}" for key, value in params.items() if value])
+        result_url = base_url + query_string
+        return result_url
+    def truncate_string(input_string: str, word_limit=50) -> str:
+        words = input_string.split()  
+        if len(words) > word_limit:
+            truncated = " ".join(words[:word_limit]) + "..."  
+            return truncated
+        return input_string 
+    def search(self, username) -> list:
         filters = self.get_filters(username)
         url = self.generate_link(filters)
         self.scrap.add_url(url)
         vacancies = self.scrap.parse()
         return vacancies
-    def generate_message(self, vacancies):
-        for vacancy in vacancies:
-            pass
+    def generate_message(self, vacancies) -> list:
+        for iteration in range(3):
+            vacancies_messages = f"""<b>{vacancies[0].pop(iteration)}</b>
+            <p>{self.truncate_string(vacancies[1].pop(iteration))}</p>
+            <p>ЗП: {vacancies[2].pop(iteration)}</p>
+            """
+            urls = vacancies[3].pop(iteration)
+        return (vacancies_messages, urls)
+
+        
