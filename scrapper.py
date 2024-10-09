@@ -1,23 +1,46 @@
-import bs4
-import selenium
-import sqlite3 as sql
+from bs4 import BeautifulSoup
+import lxml
 
-class SQLConnect():
-    def __init__(self):
-        self.connect = sql.connection('base/db.sqlite3', check_same_thread=False)
-        self.cursor = self.connect.cursor()
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS users (id SMALLINT PRIMARY KEY AUTOINCREMENT, username TINYTEXT, include TEXT, exclude TEXT, )")
-    def register_user(self, username):
-        include = ''
-        exclude = ''
-        if self.cursor.execute("SELECT username FROM users WHERE username = ?", (username,)).fetchone() is not None:            
-            pass           
+#На странице поиска вакансий
+#data-sentry-element="MagritteLink" - ссылка на вакансию
+#На странице вакансии
+#data-sentry-source-file="VacancyTitleRedesigned.tsx" - название вакансии
+#data-qa="vacancy-description" - описание вакансии 
+#data-qa="vacancy-salary-compensation-type-gross" - зп по вакансии
+
+from bs4 import BeautifulSoup
+
+def clear_data(data: list) -> list:
+    cleaned_data = []
+    for item in data:
+        if isinstance(item, str):  
+            soup = BeautifulSoup(item, 'html.parser')
+            cleaned_item = soup.get_text()  
+            cleaned_data.append(cleaned_item)
         else:
-            self.cursor.execute("INSERT INTO users (username, include, exclude) VALUES (?, ?, ?)", (username, include, exclude))
-            self.connect.commit()
-    def get_filters(self, username):
-        temp = self.cursor.execute("SELECT include, exclude FROM users WHERE username = ?", (username))
-        return temp.fetchall()
-    def search(self, username):
-        filters = self.get_filters(username)
-        
+            cleaned_data.append(item)  
+    return cleaned_data
+            
+            
+class Scrap():
+    def __init__(self):
+        pass
+    def add_url(self, url):
+        self.start = BeautifulSoup(url, 'lxml.parser')
+    def parse(self):
+        titles = []
+        descriptions = []
+        salary = []
+        data_set = [] 
+        urls = clear_data(self.start.find_all('data-sentry-element="MagritteLink"'))
+        for i in urls:
+            self.scrap = BeautifulSoup(i, 'lxml')
+            titles.append(clear_data(self.scrap.find_all('data-sentry-source-file="VacancyTitleRedesigned.tsx"')))
+            descriptions.append(clear_data(self.scrap.find_all('data-qa="vacancy-description"')))
+            salary.append(clear_data(self.scrap.find_all('data-qa="vacancy-salary-compensation-type-gross"')))
+        data_set.append(titles)
+        data_set.append(descriptions)
+        data_set.append(salary)
+        data_set.append(urls)
+        return data_set
+            
